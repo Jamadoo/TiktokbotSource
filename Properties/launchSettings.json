@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RedditBotNew": {
+      "commandName": "Project",
+      "commandLineArgs": "-setup"
+    }
+  }
+}

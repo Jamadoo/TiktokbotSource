@@ -1,0 +1,5 @@
+D:\Saves\C# Saves\RedditBotNew\Builds\Redditbot\RedditBotNew.pdb
+D:\Saves\C# Saves\RedditBotNew\Builds\Redditbot\selenium-manager\linux\selenium-manager
+D:\Saves\C# Saves\RedditBotNew\Builds\Redditbot\selenium-manager\macos\selenium-manager
+D:\Saves\C# Saves\RedditBotNew\Builds\Redditbot\selenium-manager\windows\selenium-manager.exe
+D:\Saves\C# Saves\RedditBotNew\Builds\Redditbot\RedditBotNew
