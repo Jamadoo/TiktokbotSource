@@ -37,6 +37,9 @@ using Newtonsoft.Json;
 using IniParser.Model;
 using IniParser;
 using IniWrapper.ParserWrapper;
+using System.Net;
+using System.IO.Compression;
+using System.ComponentModel;
 
 namespace RedditBotNew
 {
@@ -80,13 +83,22 @@ namespace RedditBotNew
 
     internal class Program
     {
+        // Folders
         public static string RepoPath = (Debugger.IsAttached ? Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName + "\\Build" : AppDomain.CurrentDomain.BaseDirectory);
+        public static string GRPath = RepoPath + "\\GlobalResources";
         public static string VFCPath = RepoPath + "\\VideoFromComment";
-        
+        public static string PSPath = RepoPath + "\\SongFromProfile";
+        // Files
+        static string TiktokUploaderPath = $"{Program.GRPath}/uploader.exe";
+
         // Telegram bot
-        public static TelegramBotClient botClient = new TelegramBotClient("7012710556:AAGwv_8jywFmSQFfR4WCegft63JCgEhobiY");
+        public static TelegramBotClient botClient = new("7012710556:AAGwv_8jywFmSQFfR4WCegft63JCgEhobiY");
         public static string GroupChatId = "-1002028670804";
-        public static string RedComBaseText = "Creating Video Type: RedditCommentVideo\nStatus:";
+        // Base Text
+        static string BaseText = "Creating Video\nType:";
+        public static string rcBaseText = BaseText + "RedditCommentVideo\nStatus:";
+        public static string psBaseText = BaseText + "ProfileSongVideo\nStatus:";
+
         // Commands
         static string CreateVideoCommand = "/create";
         static string SettingsCommand = "/settings";
@@ -94,6 +106,11 @@ namespace RedditBotNew
         static string UpdateCommand = "/update";
         // Other
         static List<DateTime> PostTimes = null;
+        static string SelectedConfig = VFCPath;
+
+        // General
+        static int VideoGenInProgress = 0;
+        static DateTime lastDownloadUpdate = DateTime.Now;
 
         //  Disable Close Button
         private const int MF_BYCOMMAND = 0x00000000;
@@ -163,6 +180,9 @@ namespace RedditBotNew
                     case "1":
                         StartRedditCommentVideo();
                         break;
+                    case "2":
+                        StartProfileToSongVideo();
+                        break;
                     default:
                         Message StatusMessage = await botClient.SendTextMessageAsync(chatId: GroupChatId, text: "Invalid Video Type", cancellationToken: new CancellationToken());
                         break;
@@ -171,15 +191,57 @@ namespace RedditBotNew
             // Config Commands
             if (update.Message.Text.Substring(0, Math.Min(update.Message.Text.Length, SettingsCommand.Length)) == SettingsCommand)
             {
-                // Get Ini File
-                var parser = new FileIniDataParser();
-                IniData IniFile = parser.ReadFile(VFCPath + "/config.ini");
                 // Check Args
                 var Args = update.Message.Text.Split(" ");
+                // Get Ini File
+                var parser = new FileIniDataParser();
+                IniData IniFile = parser.ReadFile(SelectedConfig + "/config.ini");
+                // Select Config
+                if (Args.Length == 3 && Args[1].ToLower() == "select")
+                {
+                    int SelectedIndex = 0;
+                    int.TryParse(Args[2], out SelectedIndex);
+                    if (SelectedIndex > 0)
+                    {
+                        switch (SelectedIndex)
+                        {
+                            case 1:
+                                SelectedConfig = VFCPath;
+                                break;
+                            case 2:
+                                SelectedConfig = PSPath;
+                                break;
+                            default:
+                                SelectedConfig = VFCPath;
+                                break;
+                        }
+                        try
+                        {
+                            await botClient.SendTextMessageAsync(GroupChatId, "Selected Config In Folder: " + SelectedConfig[(SelectedConfig.LastIndexOf("\\") + 1)..]);
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine("Failed To Send Select Config Notice:\n" + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            await botClient.SendTextMessageAsync(GroupChatId, "Please Provide a Real Index Number");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Failed To Send Config Notice:\n" + ex.Message);
+                        }
+                    }
+                    return;
+                }
                 // Show Help
                 if (Args.Length == 2 && Args[1].ToLower() == "help")
                 {
                     string HelpMessage = 
+                        "/settings select [index] - Select VideoType Config" +
                         "/settings help - Show Available Commands\n" +
                         "/settings - Display Config File\n" +
                         "/settings comments - Display Config File With Comments\n" +
@@ -262,39 +324,26 @@ namespace RedditBotNew
             //  Update
             if (update.Message.Text.Substring(0, Math.Min(update.Message.Text.Length, UpdateCommand.Length)) == UpdateCommand)
             {
+                // Check If VideoGenInProgress
+                if (VideoGenInProgress > 0 && !Regex.IsMatch(update.Message.Text, " -f"))
+                {
+                    await botClient.SendTextMessageAsync(GroupChatId, "Cant Update Bot While Video Gen Is In Progress");
+                    return;
+                }
+                // Check For Update Link
+                var Args = update.Message.Text.Split(" ");
+                if (Args.Length == 2)
+                {
+                    // Do File Download Update
+                    ZipUpdate(Args[1]).Wait();
+                    return;
+                }
+
+                /// Or Else Do Git Update
                 // Send Telegram Message
                 await botClient.SendTextMessageAsync(GroupChatId, "Bot Is Being Updated");
-
-                // Create the batch script in the user temp folder
-                string tempFolder = Path.GetTempPath();
-                string batchScriptPath = Path.Combine(tempFolder, "update_and_restart.bat");
-
-                // Write the batch script
-                string[] batchScriptContent =
-                {
-                    "@echo off",
-                    "timeout /t 1 > nul", // Add a short delay to give time for the C# process to close
-                    $"cd \"{RepoPath}\"", // Change directory to the repository path
-                    "git pull", // Execute git pull
-                    "timeout /t 1 > nul",
-                    "echo Bot Updated. > Updated.txt",
-                    "start RedditBotNew.exe", // Start the new program
-                    "del \"%~f0\"" // Delete itself (the batch file)
-                };
-
-                System.IO.File.WriteAllLines(batchScriptPath, batchScriptContent);
-
-                // Execute the batch script in a new Command Prompt
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "cmd.exe",
-                    Arguments = $"/c \"{batchScriptPath}\"", // Run and exit the new Command Prompt
-                    CreateNoWindow = true, // Don't show a new console window
-                    UseShellExecute = false
-                });
-
-                // Exit program
-                Environment.Exit(0);
+                // Update From Git
+                GitUpdate();
             }
         }
         static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -313,22 +362,23 @@ namespace RedditBotNew
         // --- Video Focused Functions --- \\
         static public async Task StartRedditCommentVideo()
         {
+            VideoGenInProgress++;
             Console.WriteLine("--- Starting Creation Of RedditCommentVideo ---");
             // Send Message
-            Message StatusMessage = await botClient.SendTextMessageAsync(chatId: GroupChatId, text: RedComBaseText + " Initializing Creation", cancellationToken: new CancellationToken());
+            Message StatusMessage = await botClient.SendTextMessageAsync(chatId: GroupChatId, text: rcBaseText + " Initializing Creation", cancellationToken: new CancellationToken());
 
             // Get Script
             var VideoGen = new rc_VideoGen();
 
             // Create LogFile
             var LoggerFolderCount = new DirectoryInfo(VFCPath + "/Logs");
-            VideoGen.LoggerPath = VFCPath + "/Logs/RedditCommentVideo" + LoggerFolderCount.GetFiles().Count().ToString() + ".txt";
+            VideoGen.LoggerPath = VFCPath + "/Logs/RedditCommentVideo" + LoggerFolderCount.GetFiles().Length.ToString() + ".txt";
             var Logger = VideoGen.LoggerPath;
             System.IO.File.WriteAllText(Logger, "");
             Console.WriteLine("Log File: " + Logger);
             // Manage Log Updates
-            var LogUpdateManager = new rc_LogUpdates(Logger, StatusMessage, VideoGen);
-            VideoGen.LogUpdates = LogUpdateManager;
+            var LogUpdateManager = new LogUpdates(Logger, StatusMessage, VideoGen, rcBaseText);
+            VideoGen.rcLogUpdates = LogUpdateManager;
 
             // Start Script
             var Gen = Task.Run(VideoGen.StartCreation);
@@ -353,8 +403,7 @@ namespace RedditBotNew
                 StatusMessage = await botClient.SendTextMessageAsync(chatId: GroupChatId, successText, parseMode: ParseMode.MarkdownV2);
 
                 // Upload File
-                //UploadToGoFile(VideoGen.FinalVideoPath, StatusMessage, successText).Wait();
-                UploadToTiktok(VideoGen.FinalVideoPath, VideoGen.VideoCaption, VideoGen.CookieFile, VideoGen.TiktokUploaderPath, StatusMessage, successText);
+                UploadToTiktok(VideoGen.FinalVideoPath, VideoGen.VideoCaption, VideoGen.CookieFile, TiktokUploaderPath, StatusMessage, successText);
             }
             else
             {
@@ -364,6 +413,60 @@ namespace RedditBotNew
             }
 
             // Cleanup
+            VideoGenInProgress--;
+            Console.WriteLine("--- Done Creating Video ---\nSuccsess: " + VideoGen.IsSuccessful);
+        }
+
+        static public async Task StartProfileToSongVideo()
+        {
+            VideoGenInProgress++;
+            Console.WriteLine("--- Starting Creation Of ProfileToSong ---");
+            // Send Message
+            Message StatusMessage = await botClient.SendTextMessageAsync(chatId: GroupChatId, text: psBaseText + " Initializing Creation", cancellationToken: new CancellationToken());
+
+            // Get Script
+            var VideoGen = new ps_VideoGen();
+
+            // Create LogFile
+            var LoggerFolderCount = new DirectoryInfo(PSPath + "/Logs");
+            VideoGen.LoggerPath = PSPath + "/Logs/ProfileSongVideo" + LoggerFolderCount.GetFiles().Length.ToString() + ".txt";
+            var Logger = VideoGen.LoggerPath;
+            System.IO.File.WriteAllText(Logger, "");
+            Console.WriteLine("Log File: " + Logger);
+            // Manage Log Updates
+            var LogUpdateManager = new LogUpdates(Logger, StatusMessage, VideoGen, psBaseText);
+            VideoGen.psLogUpdates = LogUpdateManager;
+
+            // Start Script
+            var Gen = Task.Run(VideoGen.StartCreation);
+            Gen.Wait();
+
+            // Remove Event
+            Thread.Sleep(1000);
+            // Get Result
+            if (VideoGen.IsSuccessful)
+            {
+                // Get Caption
+                string VideoCaption = VideoGen.Captions[1];
+                string EscapePattern = @"[_\*\[\]\(\)~>#\+\-=|{}.!]";
+                // Create Succsess Text
+                string successText = "--- Video Created! ---\n\nCaption: `" + VideoCaption + "`\n\nFinal Video Is Being Uploaded";
+                successText = Regex.Replace(successText, EscapePattern, @"\$0");
+                // Send Message
+                await botClient.DeleteMessageAsync(StatusMessage.Chat.Id, StatusMessage.MessageId);
+                StatusMessage = await botClient.SendTextMessageAsync(chatId: GroupChatId, successText, parseMode: ParseMode.MarkdownV2);
+
+                // Upload File
+                //UploadToTiktok(VideoGen.FinalVideoPath, VideoCaption, VideoGen.CookieFile, TiktokUploaderPath, StatusMessage, successText);
+            }
+            else
+            {
+                // Display Error
+                await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, "--- An Error Occured While Creating Video ---\nError: " + VideoGen.Error, parseMode: ParseMode.Html);
+            }
+
+            // Cleanup
+            VideoGenInProgress--;
             Console.WriteLine("--- Done Creating Video ---\nSuccsess: " + VideoGen.IsSuccessful);
         }
 
@@ -540,9 +643,89 @@ namespace RedditBotNew
             string FinalText = $"{successText}\n\n{LinkText}";
             await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, FinalText, parseMode: ParseMode.MarkdownV2);
         }
-        static void UpdateProject()
+        
+        // --- Update Project --- \\
+        static void GitUpdate()
         {
+            // Create the batch script in the user temp folder
+            string tempFolder = Path.GetTempPath();
+            string batchScriptPath = Path.Combine(tempFolder, "update_and_restart.bat");
 
+            // Write the batch script
+            string[] batchScriptContent =
+            {
+                    "@echo off",
+                    "timeout /t 1 > nul", // Add a short delay to give time for the C# process to close
+                    $"cd \"{RepoPath}\"", // Change directory to the repository path
+                    "git pull", // Execute git pull
+                    "timeout /t 1 > nul",
+                    "echo Bot Updated. > Updated.txt",
+                    "start RedditBotNew.exe", // Start the new program
+                    "del \"%~f0\"" // Delete itself (the batch file)
+                };
+
+            System.IO.File.WriteAllLines(batchScriptPath, batchScriptContent);
+
+            // Execute the batch script in a new Command Prompt
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = $"/c \"{batchScriptPath}\"", // Run and exit the new Command Prompt
+                CreateNoWindow = true, // Don't show a new console window
+                UseShellExecute = false
+            });
+
+            // Exit program
+            Environment.Exit(0);
+        }
+        static async Task ZipUpdate(string DownloadLink)
+        {
+            // Download File
+            string UpdateText = "-- Updating --\n";
+            var StatusMessage = await botClient.SendTextMessageAsync(GroupChatId, $"{UpdateText}File Is Being Downlaoded");
+            var filePath = $"{RepoPath}\\UpdateFolder.zip";
+            bool DownloadDone = false;
+            using (WebClient wc = new WebClient())
+            {
+                wc.DownloadProgressChanged += (object sender, DownloadProgressChangedEventArgs e) => UpdateDownloadProgress(StatusMessage, e.ProgressPercentage, $"{UpdateText}File Is Being Downlaoded");
+                wc.DownloadFileCompleted += (object sender, AsyncCompletedEventArgs e) => DownloadDone = true;
+                try
+                {
+                    wc.DownloadFileAsync(
+                        new Uri(DownloadLink),
+                        filePath
+                    );
+                }
+                catch
+                {
+                    await botClient.EditMessageTextAsync(GroupChatId, StatusMessage.MessageId, $"{UpdateText}ERROR: Error Occored While Downloading File");
+                    return;
+                }
+                while (!DownloadDone) await Task.Delay(1000);
+            }
+            // Extract Files
+            await botClient.EditMessageTextAsync(GroupChatId, StatusMessage.MessageId, $"{UpdateText}Extracting Files");
+            try
+            {
+                ZipFile.ExtractToDirectory(filePath, RepoPath, true);
+            }
+            catch(Exception ex)
+            {
+                await botClient.EditMessageTextAsync(GroupChatId, StatusMessage.MessageId, $"{UpdateText}ERROR: Could Not Extract Files:\n" + ex.Message);
+                return;
+            }
+            // Delete Zip
+            System.IO.File.Delete(filePath);
+            // Done
+            await botClient.EditMessageTextAsync(GroupChatId, StatusMessage.MessageId, "-- Updated --\nBot Files Updated!");
+        }
+        static void UpdateDownloadProgress(Message StatusMessage, int Progress, string BaseText)
+        {
+            if (DateTime.Now.Subtract(lastDownloadUpdate).TotalSeconds >= 2)
+            {
+                lastDownloadUpdate = DateTime.Now;
+                botClient.EditMessageTextAsync(GroupChatId, StatusMessage.MessageId, BaseText + "\nProgress: " + Progress);
+            }  
         }
     }
 }

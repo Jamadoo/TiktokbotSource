@@ -59,13 +59,12 @@ namespace RedditBot
         public rc_SelectedTitle SelectedTitle;
         public string VideoCaption;
         public string CookieFile = Path + "/Resources/AccountCookies/UpvoteVoices.txt";
-        public string TiktokUploaderPath = "";
         
         // Cross Refrence
         public string LoggerPath;
         public bool IsSuccessful = false;
         public string Error;
-        public rc_LogUpdates LogUpdates = null;
+        public LogUpdates rcLogUpdates = null;
         public string FinalVideosFolder = $"{Path}/FinalVideos";
 
         // Logger
@@ -76,7 +75,7 @@ namespace RedditBot
                 if (_logAsString != value)
                 {
                     _logAsString = value; 
-                    LogUpdates.HandleLogUpdate(_logAsString); 
+                    rcLogUpdates.HandleLogUpdate(_logAsString); 
                 }
             } 
         }
@@ -89,10 +88,9 @@ namespace RedditBot
             IsSuccessful = false;
 
             // Get Paths
-            FFmpegPath = IniFile["Paths"]["FFmpeg"] == "" ? Path + "/Resources/ffmpeg.exe" : IniFile["Paths"]["FFmpeg"];
-            ChromePath = IniFile["Paths"]["Chrome"] == "" ? Path + "/Resources/Chrome/chrome.exe" : IniFile["Paths"]["Chrome"];
-            ChromeDriverPath = IniFile["Paths"]["ChromeDriver"] == "" ? Path + "/Resources/chromedriver.exe" : IniFile["Paths"]["ChromeDriver"];
-            TiktokUploaderPath = $"{Path}/Resources/uploader.exe";
+            FFmpegPath = IniFile["Paths"]["FFmpeg"] == "" ? Program.GRPath + "/ffmpeg.exe" : IniFile["Paths"]["FFmpeg"];
+            ChromePath = IniFile["Paths"]["Chrome"] == "" ? Program.GRPath + "/Chrome/chrome.exe" : IniFile["Paths"]["Chrome"];
+            ChromeDriverPath = IniFile["Paths"]["ChromeDriver"] == "" ? Program.GRPath + "/chromedriver.exe" : IniFile["Paths"]["ChromeDriver"];
 
             try
             {
@@ -413,7 +411,7 @@ namespace RedditBot
                 AddCommentThread(SearchComment, DepthCount, TopLCount);
             }
 
-            Task.Run(() => Log("[COMMENT]Done On Depth: " + DepthCount + " - TopL " + TopLCount.ToString()));
+            Task.Run(() => Log("--- Scrapping Comments ---|||Scrapped Comments: " + FilteredComments.Count.ToString()));
         }
         async Task<string> AskAI(string Prompt)
         {
