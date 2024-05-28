@@ -5,9 +5,7 @@ using IniParser.Model;
 using OpenAI_API.Models;
 using RedditBotNew;
 using Reddit.Inputs.Search;
-using ElevenLabs;
 using OpenQA.Selenium;
-using ElevenLabs.Voices;
 using OpenQA.Selenium.Support.UI;
 using Newtonsoft.Json;
 using System.Text;
@@ -17,16 +15,15 @@ using OpenQA.Selenium.Chrome;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
 using OpenQA.Selenium.Interactions;
-using Microsoft.Extensions.Logging;
 using GoFileSharp.Model.GoFileData;
 using System.IO;
 using System.Collections.Generic;
 using NAudio.Wave.SampleProviders;
 using System.Runtime.InteropServices;
 using NAudio.Mixer;
-using Anthropic.SDK;
-using Anthropic.SDK.Constants;
-using Anthropic.SDK.Messaging;
+using OpenAI_API;
+using static OpenAI_API.Audio.TextToSpeechRequest;
+using OpenAI_API.Audio;
 
 namespace RedditBot
 {
@@ -34,19 +31,16 @@ namespace RedditBot
     {
         // Private Single Use
         static string Path = Program.VFCPath;
-        IniData IniFile = (new FileIniDataParser()).ReadFile(Path + "/config.ini");
         string VoiceoverFolder;
         string ScreenshotFolder;
         int SelectedTitleIndex;
         RedditClient Reddit;
         List<Post> TopPosts = new List<Post>();
-        ElevenLabsClient api;
+        OpenAIAPI api;
         object logLock = new object();
         static int VideoHeight = 1080;
         static int VideoWidth = 570;
-        string FFmpegPath = "";
-        string ChromePath = "";
-        string ChromeDriverPath = "";
+        int RunningCommentJobs = 0;
 
         // Final Lists
         List<ScriptComment> SelectedComments = new List<ScriptComment>();
@@ -61,6 +55,7 @@ namespace RedditBot
         public string CookieFile = Path + "/Resources/AccountCookies/UpvoteVoices.txt";
         
         // Cross Refrence
+        public IniData IniFile = (new FileIniDataParser()).ReadFile(Path + "\\config.ini");
         public string LoggerPath;
         public bool IsSuccessful = false;
         public string Error;
@@ -87,18 +82,13 @@ namespace RedditBot
             Console.ForegroundColor = ConsoleColor.Gray;
             IsSuccessful = false;
 
-            // Get Paths
-            FFmpegPath = IniFile["Paths"]["FFmpeg"] == "" ? Program.GRPath + "/ffmpeg.exe" : IniFile["Paths"]["FFmpeg"];
-            ChromePath = IniFile["Paths"]["Chrome"] == "" ? Program.GRPath + "/Chrome/chrome.exe" : IniFile["Paths"]["Chrome"];
-            ChromeDriverPath = IniFile["Paths"]["ChromeDriver"] == "" ? Program.GRPath + "/chromedriver.exe" : IniFile["Paths"]["ChromeDriver"];
-
             try
             {
                 /// Start Script
                 GetScript();
-                CreateVideoCaption().Wait();
                 GetScreenshots();
                 GetVoiceAndTiming().Wait();
+                CreateVideoCaption().Wait();
                 SaveVaraibles(); // debugging
                 CreateVideo().Wait();
                 Cleanup();
@@ -264,17 +254,16 @@ namespace RedditBot
             FilteredComments.Clear();
             Post ActivePost = TopPosts[SelectedTitleIndex];
             var TopComments = ActivePost.Comments.ITop;
-            List<Task> AllTasks = new List<Task>();
+            RunningCommentJobs = 0;
             for (int PostComment = 0; PostComment < Math.Min(18, TopComments.Count-1); PostComment++)
             {
                 Log("Starting: " + PostComment.ToString());
                 var Comment = TopComments[PostComment];
                 var DepthCount = 0;
-                var TopLCount = PostComment;
-                var CurrentTask = Task.Run(() => { AddCommentThread(Comment, DepthCount, TopLCount); });
-                AllTasks.Add(CurrentTask);
+                Task.Run(() => { AddCommentThread(Comment, DepthCount); });
             }
-            Task.WaitAll(AllTasks.ToArray());
+            Thread.Sleep(1000);
+            while (RunningCommentJobs > 0) { Thread.Sleep(1000); }
             // Get Best Comments (AI)
             Log("-- Using AI For Selection");
             // Convert Comments To String
@@ -315,6 +304,10 @@ namespace RedditBot
             Log("-- Removing Used Titles");
             // Get Used Titles
             var TextFilePath = Path + "/Resources/UsedTitles.txt";
+            if (!File.Exists(TextFilePath))
+            {
+                File.WriteAllText(TextFilePath, "");
+            }
             var InfoTitles = File.ReadAllText(TextFilePath);
             List<string> UsedTitles = new List<string>();
             string NewTextFile = "";
@@ -323,12 +316,15 @@ namespace RedditBot
                 if (InfoTitle != "")
                 {
                     var InfoSplit = InfoTitle.Split("||");
-                    var AddDate = DateTime.Parse(InfoSplit[1]);
-                    var f = DateTime.Today.Subtract(AddDate).Days;
-                    if (DateTime.Today.Subtract(AddDate).Days < 4)
+                    if (InfoSplit.Length == 2)
                     {
-                        NewTextFile = NewTextFile + InfoTitle + "\n";
-                        UsedTitles.Add(InfoSplit[0]);
+                        var AddDate = DateTime.Parse(InfoSplit[1]);
+                        var f = DateTime.Today.Subtract(AddDate).Days;
+                        if (DateTime.Today.Subtract(AddDate).Days < 4)
+                        {
+                            NewTextFile = NewTextFile + InfoTitle + "\n";
+                            UsedTitles.Add(InfoSplit[0]);
+                        }
                     }
                 }
             }
@@ -382,41 +378,38 @@ namespace RedditBot
                 if (cComment.Username == chUsername) return true;
             return false;
         }
-        void AddCommentThread(Comment SearchComment, int DepthCount, int TopLCount)
+        void AddCommentThread(Comment SearchComment, int DepthCount)
         {
             var ReplyTag = DepthCount >= 1 ? "[REPLY] " : "";
-
+            RunningCommentJobs++;
             try
             {
                 SearchComment.Body = ReplyTag + SearchComment.Body;
                 FilteredComments.Add(SearchComment);
 
                 if (DepthCount >= 2) { return; }
-                List<Task> AllTasks = new List<Task>();
-                for (var i = 0; i < Math.Clamp(SearchComment.Comments.ITop.Count-1, 0, 4); i++)
+
+                var ComReplies = SearchComment.Comments.ITop;
+                for (var i = 0; i < Math.Clamp(ComReplies.Count - 1, 0, 3); i++)
                 {
-                    var iComment = SearchComment.Comments.ITop[i];
+                    var iComment = ComReplies[i];
                     var iDepthCount = DepthCount + 1;
-                    var iTopLCount = TopLCount;
-                    var CurrentTask = Task.Run(() => { AddCommentThread(iComment, iDepthCount, iTopLCount); });
-                
-                    AllTasks.Add(CurrentTask);
+                    Task.Run(() => { AddCommentThread(iComment, iDepthCount); });
                 }
-                Task.WaitAll(AllTasks.ToArray());
             }
             catch(Exception ex)
             {
                 Log("-- Reddit Error:\n"+ ex.Message + "\n\nRetrying in 30 secs");
                 Thread.Sleep(30000);
-                AddCommentThread(SearchComment, DepthCount, TopLCount);
+                AddCommentThread(SearchComment, DepthCount);
             }
-
+            RunningCommentJobs--;
             Task.Run(() => Log("--- Scrapping Comments ---|||Scrapped Comments: " + FilteredComments.Count.ToString()));
         }
         async Task<string> AskAI(string Prompt)
         {
             /// CLAUDE AI
-            // Setup
+            /*// Setup
             var client = new AnthropicClient(IniFile["Settings"]["ClaudeAPI"]);
             var messages = new List<Message>() { new Message(RoleType.User, Prompt) };
             var parameters = new MessageParameters()
@@ -453,24 +446,26 @@ namespace RedditBot
                 throw new Exception("Error While Getting AI response:\n" + ex.Message);
             }
             // Return
-            return response.Message.ToString();
+            return response.Message.ToString();*/
 
-            /// ChatGPT
-            /*var api = new OpenAI_API.OpenAIAPI(IniFile["Settings"]["OpenAIAPI"]);
+            /// Chatgpt
+            // Setup
+            OpenAIAPI api = new OpenAI_API.OpenAIAPI(IniFile["Settings"]["OpenAIAPI"]);
             var chat = api.Chat.CreateConversation();
-            chat.Model = IniFile["Settings"]["UseGpt4"] == "0" ? Model.ChatGPTTurbo_1106 : Model.GPT4_Turbo;
+            chat.Model = Model.GPT4_Omni;
             chat.RequestParameters.Temperature = 0.35;
-            chat.AppendSystemMessage(Prompt);
-            string response = "";
+            // Give Prompt
+            chat.AppendUserInput(Prompt);
+            // Get Response
             try
             {
-                response = await chat.GetResponseFromChatbotAsync();
+                string response = await chat.GetResponseFromChatbotAsync();
+                return response;
             }
-            catch(Exception ex)
+            catch(Exception Ex)
             {
-                throw new Exception("Error While Getting AI response:\n" + ex.Message);
+                throw new Exception("Error While Getting Ai Reponse:\n" + Ex.Message);
             }
-            return response;*/
         }
 
         async Task GetSelectTitle_AI(string Titles)
@@ -532,6 +527,7 @@ namespace RedditBot
                 return;
             }
             // Add To Selected Comments
+            Log("-- Attempting Read Ai Comments");
             foreach (string cAiComment in arr_StringComments)
             {
                 string AiComment = cAiComment.Trim();
@@ -539,12 +535,18 @@ namespace RedditBot
                 {
                     // Set Vars
                     int SelectIndex;
-                    string CommentIndex = AiComment[..Regex.Match(AiComment, @"[a-zA-Z]|\.").Index];
-                    // Try Convert
-                    bool Success = int.TryParse(CommentIndex, out SelectIndex);
-                    if (!Success)
+
+                    // Use regex to extract all sequences of digits
+                    var matches = Regex.Matches(cAiComment, @"\d+");
+                    if (matches.Count > 0)
                     {
-                        Log("Incorrect Format By AI, retrying: " + CommentIndex);
+                        // Get the first match, which is the first sequence of digits
+                        SelectIndex = int.Parse(matches[0].Value);
+                        Console.WriteLine("Extracted First Number: " + matches[0].Value);
+                    }
+                    else
+                    {
+                        Log("Incorrect Format By AI, retrying");
                         GetSelectComments_AI(CommentBodies, arr_Comments).Wait();
                         return;
                     }
@@ -599,27 +601,29 @@ namespace RedditBot
         }
 
         // --- Get Audio And Timings --- \\
-        async Task<VoiceClip> TextToSpeech(string Text, Voice SelectedVoice, VoiceSettings SeleVoiceSettings)
+        async Task TextToSpeech(string text, string SavePath)
         {
-            VoiceClip Clip;
             try
             {
-                Clip = await api.TextToSpeechEndpoint.TextToSpeechAsync(Text, SelectedVoice, SeleVoiceSettings);
+                api = new OpenAIAPI(IniFile["Settings"]["OpenAIAPI"]);
+                var request = new TextToSpeechRequest()
+                {
+                    Input = text,
+                    ResponseFormat = ResponseFormats.MP3,
+                    Model = Model.TTS_Speed,
+                    Voice = Voices.Alloy,
+                    Speed = 1
+                };
+                await api.TextToSpeech.SaveSpeechToFileAsync(request, SavePath);
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Log(Error);
-                throw new Exception("Error Happened While Calling Evenlabs: " + ex.Message);
-                /*Console.ForegroundColor = ConsoleColor.Blue;
-                Log("If The API Key Is Overused, Paste New Key Here: ");
-                Console.ForegroundColor = ConsoleColor.Gray;
-                string NewAPI = Console.ReadLine();
-                api = new ElevenLabsClient(NewAPI);
-                Clip = await api.TextToSpeechEndpoint.TextToSpeechAsync(Text, SelectedVoice, SeleVoicePrompts);*/
+                Log("--- Error Occorred. Waiting 20 secs");
+                Console.WriteLine("Error Happened While Calling Retrying In 20 Secs: " + ex.Message);
+                Thread.Sleep(21000);
+                await TextToSpeech(text, SavePath);
             }
-
-            return Clip;
         }
         async Task GetVoiceAndTiming()
         {
@@ -630,16 +634,9 @@ namespace RedditBot
             VoiceoverFolder = BaseFolder.CreateSubdirectory(FolderPath).FullName;
             // Say Title
             VoiceAndTimings.Clear();
-            // real: d02b3515011ee327a7b2d7b5715a9621
-            api = new ElevenLabsClient(IniFile["Settings"]["ElevenLabAPI"]);
-            var voice = await api.VoicesEndpoint.GetVoiceAsync("nPczCjzI2devNBz1zQrb");
-            var defaultVoiceSettings = await api.VoicesEndpoint.GetDefaultVoiceSettingsAsync();
-            defaultVoiceSettings.Style = 0.2f;
-            var TitleClip = await TextToSpeech(SelectedTitle.Title, voice, defaultVoiceSettings);
-            if (TitleClip == null)
-                return;
+            // OpenAI
             var TitleVoicePath = VoiceoverFolder + "\\Title.mp3";
-            await File.WriteAllBytesAsync(TitleVoicePath, TitleClip.ClipData.ToArray());
+            await TextToSpeech(SelectedTitle.Title, TitleVoicePath);
             // Get length and Add To List
             var TitleTimings = new List<double>();
             var NAudioTitle = new Mp3FileReader(TitleVoicePath);
@@ -666,13 +663,9 @@ namespace RedditBot
                     ModifiedSentence = ModifiedSentence.Replace("*", "");
                     // Get Audio
                     Log("Sentence: " + ModifiedSentence);
-                    VoiceClip SentenceClip;
-                    SentenceClip = await TextToSpeech(ModifiedSentence, voice, defaultVoiceSettings);
-                    if (SentenceClip == null)
-                        return;
                     var AudioPath = VoiceoverFolder + "\\SentenceAudio.mp3";
+                    await TextToSpeech(ModifiedSentence, AudioPath);
                     // Get Length
-                    await File.WriteAllBytesAsync(AudioPath, SentenceClip.ClipData.ToArray());
                     var NAudioComment = new Mp3FileReader(AudioPath);
                     Timings.Add(NAudioComment.TotalTime.TotalSeconds);
                     NAudioComment.Close();
@@ -681,7 +674,7 @@ namespace RedditBot
                     if (!File.Exists(CommentVoicePath))
                     {
                         // Create File On First Sentence
-                        await File.WriteAllBytesAsync(CommentVoicePath, SentenceClip.ClipData.ToArray());
+                        File.Copy(AudioPath, CommentVoicePath);
                     }
                     else
                     {
@@ -771,20 +764,30 @@ namespace RedditBot
             ScreenshotFolder = BaseFolder.CreateSubdirectory(FolderPath).FullName;
             // Open Chrome
             var Options = new ChromeOptions();
-            Options.BinaryLocation = ChromePath;
+            Options.BinaryLocation = Program.ChromePath;
             Options.AddArguments(new string[] { $"-window-size={VideoWidth},2000", "-headless" });
             ChromeDriver Driver = null;
-            try
+            int Attempts = 0;
+            while (Driver == null)
             {
-                Driver = new ChromeDriver(ChromeDriverPath, Options);
-            }
-            catch(Exception error)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Log("Error Happened While Starting Driver, retrying.\nError: " + error.Message);
-                Console.ForegroundColor = ConsoleColor.Gray;
-                GetScreenshots();
-                return;
+                try
+                {
+                    Driver = new ChromeDriver(Program.ChromeDriverPath, Options);
+                    break;
+                }
+                catch(Exception error)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Log("Error Happened While Starting Driver, retrying.\nError: " + error.Message);
+                    Console.ForegroundColor = ConsoleColor.Gray;
+
+                    if (Attempts > 5)
+                    {
+                        throw new Exception("Error While Creating Chrome Driver, after 5 attempts:\n" + error.Message);
+                    }
+
+                    Attempts++;
+                }
             }
             Driver.Navigate().GoToUrl("https://wills-dynamite-site-3e18f2.webflow.io");
             /// Get Elements
@@ -931,6 +934,7 @@ namespace RedditBot
         {
             // Get Script
             string Script = "";
+            Log("-- Creating Caption");
             foreach (ScriptComment Comment in SelectedComments)
             {
                 Script += Comment.Message;
@@ -1026,7 +1030,7 @@ namespace RedditBot
             // Start FFmpeg process
             ProcessStartInfo psi = new ProcessStartInfo
             {
-                FileName = FFmpegPath,
+                FileName = Program.FFmpegPath,
                 Arguments = ffmpegCommand,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -1138,7 +1142,7 @@ namespace RedditBot
             OutputString = $"-map [OverlayStream] -map [FinalAudio] -t {TotalVideoLength.ToString().Replace(",",".")} -y";
             // Get GPU Command
             bool GPUAccEnabled = IniFile["Settings"]["NividiaGPUAcc"] == "0" ? false : true;
-            string GPUStartCom = GPUAccEnabled ? "-hwaccel cuda -hwaccel_output_format cuda " : "";
+            string GPUStartCom = GPUAccEnabled ? "-hwaccel nvdec " : "";
             string GPUEndCom = GPUAccEnabled ? " -c:v h264_nvenc" : "";
 
             // Pieve Everything Togetherc
@@ -1150,90 +1154,6 @@ namespace RedditBot
         {
             return string.Join("_", filename.Split(System.IO.Path.GetInvalidFileNameChars()));
         }
-
-        // --- Upload Video --- \\
-        void UploadVideo()
-        {
-            /// Open Tiktok With Cookies
-            // Open Chrome
-            var Options = new ChromeOptions();
-            Options.BinaryLocation = Path + "/Resources/Chrome/chrome.exe";
-            Options.AddArguments(new string[] { "-window-size=1280,720"});
-            ChromeDriver Driver = null;
-            try
-            {
-                Driver = new ChromeDriver(Path + "/Resources/chromedriver.exe", Options);
-            }
-            catch (Exception error)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Log("Error Happened While Starting Driver To Upload, retrying.\nError: " + error.Message);
-                Console.ForegroundColor = ConsoleColor.Gray;
-                UploadVideo();
-                return;
-            }
-            // Add Cookies
-            Driver.Navigate().GoToUrl("https://www.tiktok.com");
-            var AllCookies = File.ReadAllLines($"{Path}/Resources/AccountCookies/UpvoteVoices.txt");
-            foreach (string Line in AllCookies)
-            {
-                var Parts = Line.Split('\t');
-                Cookie cookie = new Cookie(
-                    domain: Parts[0],
-                    isHttpOnly: Parts[1] == "TRUE",
-                    path: Parts[2],
-                    secure: Parts[3] == "TRUE",
-                    expiry: UnixTimeStampToDateTime(Parts[4]),
-                    name: Parts[5],
-                    value: Parts[6],
-                    sameSite: "Strict");
-                Driver.Manage().Cookies.AddCookie(cookie);
-            }
-            // Go To Creator Center
-            Driver.Navigate().GoToUrl("https://www.tiktok.com/creator-center/upload?from=upload");
-            /// Upload Video
-            // Switch To IFrame
-            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30);
-            IWebElement iframeElement = Driver.FindElement(By.CssSelector("iframe[src='https://www.tiktok.com/creator#/upload?scene=creator_center']"));
-            Driver.SwitchTo().Frame(iframeElement);
-            // Drivers
-            var actions = new Actions(Driver);
-            var WaitDriver = new WebDriverWait(Driver, TimeSpan.FromSeconds(30));
-            // Get Upload Button
-            var InputElement = Driver.FindElement(By.CssSelector("input[type='file']")); 
-            var UploadBlock = Driver.FindElement(By.CssSelector(".css-byn4hh"));
-            WaitDriver.Until(x => UploadBlock.Enabled);
-            Thread.Sleep(5000);
-            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30);
-            actions.MoveToElement(UploadBlock).Perform();
-            Thread.Sleep(2000);
-            FinalVideoPath = "D:/Windows Folders/Vidoes/Vlog Stuff/Ayaad Intro_2.mp4";
-            InputElement.SendKeys(FinalVideoPath);
-            /// Change Prompts
-            // Wait For Video To Upload
-            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(300);
-            var WaitElement = Driver.FindElement(By.CssSelector(".jsx-4098493448.mobile-preview-player"));
-            // Title
-            var TitleElement = Driver.FindElement(By.CssSelector(".DraftEditor-editorContainer"));
-            Thread.Sleep(2000);
-            TitleElement.Click();
-            Thread.Sleep(2000);
-            actions.SendKeys(Keys.Control + "a");
-            Thread.Sleep(500);
-            actions.SendKeys(Keys.Backspace);
-            Thread.Sleep(500);
-            actions.SendKeys("Hello!");
-            // Click Post
-        }
-        public DateTime UnixTimeStampToDateTime(string TimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            double unixTimeStamp = double.Parse(TimeStamp);
-            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dateTime;
-        }
-
         // --- Cleanup --- \\
         void Cleanup()
         {

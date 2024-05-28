@@ -15,15 +15,6 @@
           }
         }
       },
-      "ElevenLabs-DotNet/2.1.1": {
-        "type": "package",
-        "compile": {
-          "lib/net6.0/ElevenLabs-DotNet.dll": {}
-        },
-        "runtime": {
-          "lib/net6.0/ElevenLabs-DotNet.dll": {}
-        }
-      },
       "FluentScheduler/5.5.1": {
         "type": "package",
         "compile": {
@@ -47,19 +38,6 @@
         },
         "runtime": {
           "lib/netstandard2.1/GoFileSharp.dll": {}
-        }
-      },
-      "HtmlAgilityPack/1.11.60": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/HtmlAgilityPack.dll": {
-            "related": ".deps.json;.pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/HtmlAgilityPack.dll": {
-            "related": ".deps.json;.pdb;.xml"
-          }
         }
       },
       "ini-parser/2.5.2": {
@@ -445,18 +423,6 @@
           }
         }
       },
-      "Neel.NAudio.Utilities/1.0.0": {
-        "type": "package",
-        "dependencies": {
-          "NAudio": "1.8.0"
-        },
-        "compile": {
-          "lib/net45/NAudioUtils.dll": {}
-        },
-        "runtime": {
-          "lib/net45/NAudioUtils.dll": {}
-        }
-      },
       "NETStandard.Library/1.6.1": {
         "type": "package",
         "dependencies": {
@@ -519,7 +485,7 @@
           }
         }
       },
-      "OpenAI/1.11.0": {
+      "OpenAIFork/1.12.0": {
         "type": "package",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
@@ -736,22 +702,6 @@
           "runtimes/ubuntu.16.10-x64/native/System.Security.Cryptography.Native.OpenSsl.so": {
             "assetType": "native",
             "rid": "ubuntu.16.10-x64"
-          }
-        }
-      },
-      "Selenium.Support/4.19.0": {
-        "type": "package",
-        "dependencies": {
-          "Selenium.WebDriver": "4.19.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/WebDriver.Support.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/WebDriver.Support.dll": {
-            "related": ".xml"
           }
         }
       },
@@ -2120,21 +2070,6 @@
         "lib/netstandard2.0/Anthropic.SDK.xml"
       ]
     },
-    "ElevenLabs-DotNet/2.1.1": {
-      "sha512": "u8QgMXKk1+Trjrzu9NfG5vow6ocUD58jHd+FC1gS776cMPqpA53S5xRIz+PdxmEKRTRNrb1MY9x5x+PbDtKaJQ==",
-      "type": "package",
-      "path": "elevenlabs-dotnet/2.1.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "ElevenLabsIcon.png",
-        "LICENSE",
-        "README.md",
-        "elevenlabs-dotnet.2.1.1.nupkg.sha512",
-        "elevenlabs-dotnet.nuspec",
-        "lib/net6.0/ElevenLabs-DotNet.dll"
-      ]
-    },
     "FluentScheduler/5.5.1": {
       "sha512": "OwehD7vZ1CFAboLPrfBTibz/FeKg8DK1h242u0Y050dbfcOlb+d4S/iGBNt/yHaHIhCsmPiQqQjG13e441xWLA==",
       "type": "package",
@@ -2163,54 +2098,6 @@
         "gofilesharp.nuspec",
         "gofilesharp_icon.png",
         "lib/netstandard2.1/GoFileSharp.dll"
-      ]
-    },
-    "HtmlAgilityPack/1.11.60": {
-      "sha512": "7Uzaf1Mxeuxne33LpTZfSsuRW4sRRX6FWMolOSxXcaAwcKvFevH2E+P6tb4dMWhdyUdBfi0N0yyPZ8hqodfEYg==",
-      "type": "package",
-      "path": "htmlagilitypack/1.11.60",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "htmlagilitypack.1.11.60.nupkg.sha512",
-        "htmlagilitypack.nuspec",
-        "lib/Net35/HtmlAgilityPack.dll",
-        "lib/Net35/HtmlAgilityPack.pdb",
-        "lib/Net35/HtmlAgilityPack.xml",
-        "lib/Net40-client/HtmlAgilityPack.dll",
-        "lib/Net40-client/HtmlAgilityPack.pdb",
-        "lib/Net40-client/HtmlAgilityPack.xml",
-        "lib/Net40/HtmlAgilityPack.XML",
-        "lib/Net40/HtmlAgilityPack.dll",
-        "lib/Net40/HtmlAgilityPack.pdb",
-        "lib/Net45/HtmlAgilityPack.XML",
-        "lib/Net45/HtmlAgilityPack.dll",
-        "lib/Net45/HtmlAgilityPack.pdb",
-        "lib/NetCore45/HtmlAgilityPack.XML",
-        "lib/NetCore45/HtmlAgilityPack.dll",
-        "lib/NetCore45/HtmlAgilityPack.pdb",
-        "lib/netstandard1.3/HtmlAgilityPack.deps.json",
-        "lib/netstandard1.3/HtmlAgilityPack.dll",
-        "lib/netstandard1.3/HtmlAgilityPack.pdb",
-        "lib/netstandard1.3/HtmlAgilityPack.xml",
-        "lib/netstandard1.6/HtmlAgilityPack.deps.json",
-        "lib/netstandard1.6/HtmlAgilityPack.dll",
-        "lib/netstandard1.6/HtmlAgilityPack.pdb",
-        "lib/netstandard1.6/HtmlAgilityPack.xml",
-        "lib/netstandard2.0/HtmlAgilityPack.deps.json",
-        "lib/netstandard2.0/HtmlAgilityPack.dll",
-        "lib/netstandard2.0/HtmlAgilityPack.pdb",
-        "lib/netstandard2.0/HtmlAgilityPack.xml",
-        "lib/portable-net45+netcore45+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.XML",
-        "lib/portable-net45+netcore45+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.dll",
-        "lib/portable-net45+netcore45+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.pdb",
-        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.XML",
-        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.dll",
-        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.pdb",
-        "lib/uap10.0/HtmlAgilityPack.XML",
-        "lib/uap10.0/HtmlAgilityPack.dll",
-        "lib/uap10.0/HtmlAgilityPack.pdb",
-        "lib/uap10.0/HtmlAgilityPack.pri"
       ]
     },
     "ini-parser/2.5.2": {
@@ -2728,18 +2615,6 @@
         "naudio.winmm.nuspec"
       ]
     },
-    "Neel.NAudio.Utilities/1.0.0": {
-      "sha512": "hJGOo193hVUGdH+5QkWGgghWrxXwyZDS6Xqkl8ogLlTca1Z1jHr/Xm4/gQ9294+zYyoq6/3TApbwozcyEWDO9g==",
-      "type": "package",
-      "path": "neel.naudio.utilities/1.0.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net45/NAudioUtils.dll",
-        "neel.naudio.utilities.1.0.0.nupkg.sha512",
-        "neel.naudio.utilities.nuspec"
-      ]
-    },
     "NETStandard.Library/1.6.1": {
       "sha512": "WcSp3+vP+yHNgS8EV5J7pZ9IRpeDuARBPN28by8zqff1wJQXm26PVU8L3/fYLBJVU7BtDyqNVWq2KlCVvSSR4A==",
       "type": "package",
@@ -2783,19 +2658,18 @@
         "packageIcon.png"
       ]
     },
-    "OpenAI/1.11.0": {
-      "sha512": "ezjdykDSC/j5zB76S0WWIYuI3GwiOtYtjZZBkaGMMOC6QZgyJX4mzN28XMScTftxXjsY0RTxDF0ZkmXxwQwl9w==",
+    "OpenAIFork/1.12.0": {
+      "sha512": "CXudB/MPJ6Qp0X4XD/eCxPQpjvu9ng/ZL9n1TZoAl9rjfQpX5akTT7EkH3aNri+9AnCdwjBQQ0nk5cosE49eCQ==",
       "type": "package",
-      "path": "openai/1.11.0",
+      "path": "openaifork/1.12.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "README.md",
         "lib/netstandard2.0/OpenAI_API.dll",
         "lib/netstandard2.0/OpenAI_API.xml",
         "nuget_logo.png",
-        "openai.1.11.0.nupkg.sha512",
-        "openai.nuspec"
+        "openaifork.1.12.0.nupkg.sha512",
+        "openaifork.nuspec"
       ]
     },
     "Reddit/1.5.2": {
@@ -3048,20 +2922,6 @@
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.nuspec",
         "runtimes/ubuntu.16.10-x64/native/System.Security.Cryptography.Native.OpenSsl.so"
-      ]
-    },
-    "Selenium.Support/4.19.0": {
-      "sha512": "mMghl/3vzRNbE1FA57Iqpw8206DCKekvXl+6PKi811/fg98HSomrknvHgI4aZbfJEuL7Y2IKFt1oBbbUQT0elQ==",
-      "type": "package",
-      "path": "selenium.support/4.19.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "icon.png",
-        "lib/netstandard2.0/WebDriver.Support.dll",
-        "lib/netstandard2.0/WebDriver.Support.xml",
-        "selenium.support.4.19.0.nupkg.sha512",
-        "selenium.support.nuspec"
       ]
     },
     "Selenium.WebDriver/4.19.0": {
@@ -6600,16 +6460,12 @@
   "projectFileDependencyGroups": {
     "net7.0": [
       "Anthropic.SDK >= 3.2.1",
-      "ElevenLabs-DotNet >= 2.1.1",
       "FluentScheduler >= 5.5.1",
       "GoFileSharp >= 1.0.4",
-      "HtmlAgilityPack >= 1.11.60",
       "IniWrapper.ini-parser >= 1.1.0",
       "NAudio >= 2.2.1",
-      "Neel.NAudio.Utilities >= 1.0.0",
-      "OpenAI >= 1.11.0",
+      "OpenAIFork >= 1.12.0",
       "Reddit >= 1.5.2",
-      "Selenium.Support >= 4.19.0",
       "Selenium.WebDriver >= 4.19.0",
       "Selenium.WebDriver.ChromeDriver >= 123.0.6312.8600",
       "System.Drawing.Common >= 8.0.3",
@@ -6642,6 +6498,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "D:\\Saves\\C# Saves\\RedditBotNew\\OpenAiApi": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -6664,10 +6521,6 @@
             "target": "Package",
             "version": "[3.2.1, )"
           },
-          "ElevenLabs-DotNet": {
-            "target": "Package",
-            "version": "[2.1.1, )"
-          },
           "FluentScheduler": {
             "target": "Package",
             "version": "[5.5.1, )"
@@ -6675,10 +6528,6 @@
           "GoFileSharp": {
             "target": "Package",
             "version": "[1.0.4, )"
-          },
-          "HtmlAgilityPack": {
-            "target": "Package",
-            "version": "[1.11.60, )"
           },
           "IniWrapper.ini-parser": {
             "target": "Package",
@@ -6688,21 +6537,13 @@
             "target": "Package",
             "version": "[2.2.1, )"
           },
-          "Neel.NAudio.Utilities": {
+          "OpenAIFork": {
             "target": "Package",
-            "version": "[1.0.0, )"
-          },
-          "OpenAI": {
-            "target": "Package",
-            "version": "[1.11.0, )"
+            "version": "[1.12.0, )"
           },
           "Reddit": {
             "target": "Package",
             "version": "[1.5.2, )"
-          },
-          "Selenium.Support": {
-            "target": "Package",
-            "version": "[4.19.0, )"
           },
           "Selenium.WebDriver": {
             "target": "Package",
@@ -6748,16 +6589,6 @@
       "warningLevel": 1,
       "message": "Package 'ini-parser 2.5.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net7.0'. This package may not be fully compatible with your project.",
       "libraryId": "ini-parser",
-      "targetGraphs": [
-        "net7.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Neel.NAudio.Utilities 1.0.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net7.0'. This package may not be fully compatible with your project.",
-      "libraryId": "Neel.NAudio.Utilities",
       "targetGraphs": [
         "net7.0"
       ]

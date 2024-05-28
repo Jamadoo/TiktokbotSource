@@ -6,8 +6,6 @@ D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\RedditBotNew.deps.json
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\RedditBotNew.runtimeconfig.json
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\RedditBotNew.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\RedditBotNew.pdb
-D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\ElevenLabs-DotNet.dll
-D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\HtmlAgilityPack.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\INIFileParser.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\IniWrapper.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\IniWrapper.ini-parser.dll
@@ -28,12 +26,10 @@ D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\NAudio.Core.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\NAudio.Midi.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\NAudio.Wasapi.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\NAudio.WinMM.dll
-D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\NAudioUtils.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\Newtonsoft.Json.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\OpenAI_API.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\Reddit.NET.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\RestSharp.dll
-D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\WebDriver.Support.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\WebDriver.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\System.Drawing.Common.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\win-x64\System.IO.Abstractions.dll

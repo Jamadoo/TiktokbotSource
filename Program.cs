@@ -1,5 +1,4 @@
-﻿using ElevenLabs.User;
-using OpenQA.Selenium.DevTools.V121.Page;
+﻿using OpenQA.Selenium.DevTools.V121.Page;
 using RedditBot;
 using System;
 using System.Collections.Generic;
@@ -90,6 +89,10 @@ namespace RedditBotNew
         public static string PSPath = RepoPath + "\\SongFromProfile";
         // Files
         static string TiktokUploaderPath = $"{Program.GRPath}/uploader.exe";
+        // Get Paths
+        public static string FFmpegPath =  GRPath + "/ffmpeg.exe";
+        public static string ChromePath = GRPath + "/Chrome/chrome.exe";
+        public static string ChromeDriverPath = GRPath + "/chromedriver.exe";
 
         // Telegram bot
         public static TelegramBotClient botClient = new("7012710556:AAGwv_8jywFmSQFfR4WCegft63JCgEhobiY");
@@ -104,6 +107,7 @@ namespace RedditBotNew
         static string SettingsCommand = "/settings";
         static string NextPostCommand = "/nextpost";
         static string UpdateCommand = "/update";
+        static string ExitProgramCommand = "/exit";
         // Other
         static List<DateTime> PostTimes = null;
         static string SelectedConfig = VFCPath;
@@ -124,6 +128,9 @@ namespace RedditBotNew
 
         static void Main()
         {
+            // Reset Colors
+            Console.ForegroundColor = ConsoleColor.Gray;
+
             // Disable Close Button
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, MF_BYCOMMAND);
 
@@ -345,6 +352,12 @@ namespace RedditBotNew
                 // Update From Git
                 GitUpdate();
             }
+            // Exit Program
+            if (update.Message.Text.Substring(0, Math.Min(update.Message.Text.Length, ExitProgramCommand.Length)) == ExitProgramCommand)
+            {
+                await botClient.SendTextMessageAsync(GroupChatId, "Program Has Been Closed");
+                Environment.Exit(0);
+            }
         }
         static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
@@ -363,9 +376,24 @@ namespace RedditBotNew
         static public async Task StartRedditCommentVideo()
         {
             VideoGenInProgress++;
+            Console.ForegroundColor = ConsoleColor.Gray; 
             Console.WriteLine("--- Starting Creation Of RedditCommentVideo ---");
             // Send Message
             Message StatusMessage = await botClient.SendTextMessageAsync(chatId: GroupChatId, text: rcBaseText + " Initializing Creation", cancellationToken: new CancellationToken());
+
+            // Create Folders
+            if (!Directory.Exists(VFCPath + "\\DebugVars"))
+            {
+                Directory.CreateDirectory(VFCPath + "\\DebugVars");
+            }
+            if (!Directory.Exists(VFCPath + "\\FinalVideos"))
+            {
+                Directory.CreateDirectory(VFCPath + "\\FinalVideos");
+            }
+            if (!Directory.Exists(VFCPath + "\\Logs"))
+            {
+                Directory.CreateDirectory(VFCPath + "\\Logs");
+            }
 
             // Get Script
             var VideoGen = new rc_VideoGen();
@@ -394,22 +422,34 @@ namespace RedditBotNew
                     VideoGen.VideoCaption = VideoGen.VideoCaption[1..];
                 if (VideoGen.VideoCaption[VideoGen.VideoCaption.Length-1] == '\"')
                     VideoGen.VideoCaption = VideoGen.VideoCaption[..^1];
-                string EscaapePattern = @"[_\*\[\]\(\)~>#\+\-=|{}.!]";
+                string EscapePattern = @"(?:\\)?[_\*\[\]\(\)~>#\+\-=|{}.!]";
                 // Create Succsess Text
-                string successText = "--- Video Created! ---\n\nCaption: `" + VideoGen.VideoCaption + "`\n\nFinal Video Is Being Uploaded";
-                successText = Regex.Replace(successText, EscaapePattern, @"\$0");
+                string successText = $"--- Video Created! ---\n\nTitle: {VideoGen.SelectedTitle.Title}\nCaption: `{VideoGen.VideoCaption}`\n\nFinal Video Is Being Uploaded";
+                successText = Regex.Replace(successText, EscapePattern, @"\$0");
                 // Send Message
                 await botClient.DeleteMessageAsync(StatusMessage.Chat.Id, StatusMessage.MessageId);
                 StatusMessage = await botClient.SendTextMessageAsync(chatId: GroupChatId, successText, parseMode: ParseMode.MarkdownV2);
 
                 // Upload File
+                if (VideoGen.IniFile["Settings"]["ForceGoFile"] == "1")
+                {
+                    UploadToGoFile(VideoGen.FinalVideoPath, StatusMessage, successText).Wait();
+                    return;
+                }
                 UploadToTiktok(VideoGen.FinalVideoPath, VideoGen.VideoCaption, VideoGen.CookieFile, TiktokUploaderPath, StatusMessage, successText);
             }
             else
             {
                 // Display Error
                 var DisplayTitle = VideoGen.SelectedTitle == null ? "Unselected" : VideoGen.SelectedTitle.Title;
-                await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, "--- An Error Occured While Creating Video ---\nTitle: " + DisplayTitle + "\nError: " + VideoGen.Error, parseMode: ParseMode.Html);
+                try
+                {
+                    await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, "--- An Error Occured While Creating Video ---\nTitle: " + DisplayTitle + "\nError: " + VideoGen.Error, parseMode: ParseMode.Html);
+                }
+                catch
+                {
+                    Console.WriteLine("Error Editing Message For Unsuccessfull Video");
+                }
             }
 
             // Cleanup
@@ -420,9 +460,20 @@ namespace RedditBotNew
         static public async Task StartProfileToSongVideo()
         {
             VideoGenInProgress++;
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine("--- Starting Creation Of ProfileToSong ---");
             // Send Message
             Message StatusMessage = await botClient.SendTextMessageAsync(chatId: GroupChatId, text: psBaseText + " Initializing Creation", cancellationToken: new CancellationToken());
+
+            // Create Folders
+            if (!Directory.Exists(PSPath + "\\Logs"))
+            {
+                Directory.CreateDirectory(PSPath + "\\Logs");
+            }
+            if (!Directory.Exists(PSPath + "\\FinalVideos"))
+            {
+                Directory.CreateDirectory(PSPath + "\\FinalVideos");
+            }
 
             // Get Script
             var VideoGen = new ps_VideoGen();
@@ -447,8 +498,8 @@ namespace RedditBotNew
             if (VideoGen.IsSuccessful)
             {
                 // Get Caption
-                string VideoCaption = VideoGen.Captions[1];
-                string EscapePattern = @"[_\*\[\]\(\)~>#\+\-=|{}.!]";
+                string VideoCaption = VideoGen.Caption;
+                string EscapePattern = @"(?:\\)?[_\*\[\]\(\)~>#\+\-=|{}.!]";
                 // Create Succsess Text
                 string successText = "--- Video Created! ---\n\nCaption: `" + VideoCaption + "`\n\nFinal Video Is Being Uploaded";
                 successText = Regex.Replace(successText, EscapePattern, @"\$0");
@@ -457,12 +508,19 @@ namespace RedditBotNew
                 StatusMessage = await botClient.SendTextMessageAsync(chatId: GroupChatId, successText, parseMode: ParseMode.MarkdownV2);
 
                 // Upload File
-                //UploadToTiktok(VideoGen.FinalVideoPath, VideoCaption, VideoGen.CookieFile, TiktokUploaderPath, StatusMessage, successText);
+                UploadToTiktok(VideoGen.FinalVideoPath, VideoCaption, VideoGen.CookieFile, TiktokUploaderPath, StatusMessage, successText);
             }
             else
             {
                 // Display Error
-                await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, "--- An Error Occured While Creating Video ---\nError: " + VideoGen.Error, parseMode: ParseMode.Html);
+                try
+                {
+                    await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, "--- An Error Occured While Creating Video ---\nError: " + VideoGen.Error, parseMode: ParseMode.Html);
+                }
+                catch
+                {
+                    Console.WriteLine("Error Editing Message For Unsuccessfull Creaton");
+                }
             }
 
             // Cleanup
@@ -509,15 +567,15 @@ namespace RedditBotNew
             int PreviousStatus = 0;
             TimeSpan LastUpdate = DateTime.Now.TimeOfDay;
             bool StopUpdates = false;
-            DateTime UploadStartTime = DateTime.Now;
-            string EscapePattern = @"[_\*\[\]\(\)~>#\+\-=|{}.!]";
+            DateTime LastStatusUpdate = DateTime.Now;
+            string EscapePattern = @"(?:\\)?[_\*\[\]\(\)~>#\+\-=|{}.!]";
             string PreviousProgressText = "";
             process.OutputDataReceived += (sender, e) =>
             {
                 if (!string.IsNullOrEmpty(e.Data) && !StopUpdates)
                 {
                     // Check Error Or TimeoutTime
-                    if (e.Data.ToLower().Contains("failed to upload") || DateTime.Now.Subtract(UploadStartTime).TotalMinutes >= 4)
+                    if (e.Data.ToLower().Contains("failed to upload") || DateTime.Now.Subtract(LastStatusUpdate).TotalMinutes >= 3.5)
                     {
                         SuccsessText = $"{SuccsessText}\nERROR: An Error Happend File Uploading Video\\. Check Console For More Info\\.\nOn: {PreviousText}\n\nUploading To GoFile\\.";
                         try
@@ -533,6 +591,7 @@ namespace RedditBotNew
                         UploadToGoFile(VideoPath, StatusMessage, SuccsessText).Wait();
                         return;
                     }
+                    LastStatusUpdate = DateTime.Now;
                     PreviousText = e.Data;
 
                     // Get Status Step
@@ -572,7 +631,15 @@ namespace RedditBotNew
                             string EscapedText = SuccsessText + Regex.Replace($"\n{ProgressText}\nText: {PreviousText}", EscapePattern, @"\$0");
                             if (EscapedText != StatusMessage.Text)
                             {
-                                botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId,  EscapedText, parseMode: ParseMode.MarkdownV2);
+                                Console.WriteLine("Update: " + PreviousText);
+                                try
+                                {
+                                    botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId,  EscapedText, parseMode: ParseMode.MarkdownV2);
+                                }
+                                catch(Exception ex)
+                                {
+                                    Console.WriteLine("Failed To Set Upload Status: " + ex.Message);
+                                }
                                 LastUpdate = DateTime.Now.TimeOfDay;
                             }
                         }
@@ -592,7 +659,7 @@ namespace RedditBotNew
         {
             /// Upload File
             // Setup
-            string EscapePattern = @"[_\*\[\]\(\)~>#\+\-=|{}.!]";
+            string EscapePattern = @"(?:\\)?[_\*\[\]\(\)~>#\+\-=|{}.!']";
             var Options = new GoFileOptions
             {
                 ApiToken = "DFJGeXxxjZyx9OsauFJsMfpUA0H7xx6a",
@@ -628,7 +695,14 @@ namespace RedditBotNew
             if (goFileResponse.IsOK == false)
             {
                 string FailText = Regex.Replace($"An Error Occored While Uploading: {goFileResponse.Status}", EscapePattern, @"\$0");
-                await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, $"{successText}\n\n{FailText}", parseMode: ParseMode.MarkdownV2);
+                try
+                {
+                    await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, $"{successText}\n\n{FailText}", parseMode: ParseMode.MarkdownV2);
+                }
+                catch
+                {
+                    Console.WriteLine("Error While Edtiting Mesage For GoFile Error. GoFile Error:\n" + FailText);
+                }
                 return;
             }
             // Wait For Completion
@@ -639,9 +713,17 @@ namespace RedditBotNew
             /// End
 
             // Give File
-            var LinkText = Regex.Replace($"Video Link: {goFileResponse.Data.DownloadPage} (if the video is not shown, please wait a couple seconds)", EscapePattern, @"\$0");
-            string FinalText = $"{successText}\n\n{LinkText}";
-            await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, FinalText, parseMode: ParseMode.MarkdownV2);
+            string LinkText = $"Video Link: {goFileResponse.Data.DownloadPage} (if the video is not shown, please wait a couple seconds)";
+            var FinalText = Regex.Replace(LinkText, EscapePattern, @"\$0");
+            try
+            {
+                await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, $"{successText}\n\n{FinalText}", parseMode: ParseMode.MarkdownV2);
+            }
+            catch
+            {
+                await Task.Delay(31000);
+                await botClient.EditMessageTextAsync(chatId: StatusMessage.Chat.Id, messageId: StatusMessage.MessageId, $"{successText}\n\n{FinalText}", parseMode: ParseMode.MarkdownV2);
+            }
         }
         
         // --- Update Project --- \\
@@ -657,8 +739,9 @@ namespace RedditBotNew
                     "@echo off",
                     "timeout /t 1 > nul", // Add a short delay to give time for the C# process to close
                     $"cd \"{RepoPath}\"", // Change directory to the repository path
-                    "git pull", // Execute git pull
-                    "timeout /t 1 > nul",
+                    "git fetch --all",
+                    "git reset --hard origin/main", // Execute git pull
+                    "timeout /t 3 /nobreak",
                     "echo Bot Updated. > Updated.txt",
                     "start RedditBotNew.exe", // Start the new program
                     "del \"%~f0\"" // Delete itself (the batch file)
