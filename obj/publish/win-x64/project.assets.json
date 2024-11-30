@@ -90,7 +90,7 @@
           }
         }
       },
-      "Microsoft.CSharp/4.5.0": {
+      "Microsoft.CSharp/4.7.0": {
         "type": "package",
         "compile": {
           "ref/netcoreapp2.0/_._": {}
@@ -503,20 +503,15 @@
           }
         }
       },
-      "Reddit/1.5.2": {
+      "Portable.BouncyCastle/1.9.0": {
         "type": "package",
-        "dependencies": {
-          "Microsoft.CSharp": "4.5.0",
-          "Newtonsoft.Json": "11.0.2",
-          "RestSharp": "106.6.9"
-        },
         "compile": {
-          "lib/netstandard2.0/Reddit.NET.dll": {
+          "lib/netstandard2.0/BouncyCastle.Crypto.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.0/Reddit.NET.dll": {
+          "lib/netstandard2.0/BouncyCastle.Crypto.dll": {
             "related": ".xml"
           }
         }
@@ -2048,6 +2043,21 @@
             "related": ".pdb;.xml"
           }
         }
+      },
+      "InstagramApiSharp/1.8.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "Newtonsoft.Json": "13.0.3",
+          "Portable.BouncyCastle": "1.9.0"
+        },
+        "compile": {
+          "bin/placeholder/InstagramApiSharp.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/InstagramApiSharp.dll": {}
+        }
       }
     },
     "net7.0/win-x64": {
@@ -2139,7 +2149,7 @@
           }
         }
       },
-      "Microsoft.CSharp/4.5.0": {
+      "Microsoft.CSharp/4.7.0": {
         "type": "package",
         "compile": {
           "ref/netcoreapp2.0/_._": {}
@@ -2537,20 +2547,15 @@
           }
         }
       },
-      "Reddit/1.5.2": {
+      "Portable.BouncyCastle/1.9.0": {
         "type": "package",
-        "dependencies": {
-          "Microsoft.CSharp": "4.5.0",
-          "Newtonsoft.Json": "11.0.2",
-          "RestSharp": "106.6.9"
-        },
         "compile": {
-          "lib/netstandard2.0/Reddit.NET.dll": {
+          "lib/netstandard2.0/BouncyCastle.Crypto.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.0/Reddit.NET.dll": {
+          "lib/netstandard2.0/BouncyCastle.Crypto.dll": {
             "related": ".xml"
           }
         }
@@ -4241,6 +4246,21 @@
             "related": ".pdb;.xml"
           }
         }
+      },
+      "InstagramApiSharp/1.8.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "Newtonsoft.Json": "13.0.3",
+          "Portable.BouncyCastle": "1.9.0"
+        },
+        "compile": {
+          "bin/placeholder/InstagramApiSharp.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/InstagramApiSharp.dll": {}
+        }
       }
     }
   },
@@ -4377,10 +4397,10 @@
         "version.txt"
       ]
     },
-    "Microsoft.CSharp/4.5.0": {
-      "sha512": "kaj6Wb4qoMuH3HySFJhxwQfe8R/sJsNJnANrvv8WdFPMoNbKY5htfNscv+LHCu5ipz+49m2e+WQXpLXr9XYemQ==",
+    "Microsoft.CSharp/4.7.0": {
+      "sha512": "pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
       "type": "package",
-      "path": "microsoft.csharp/4.5.0",
+      "path": "microsoft.csharp/4.7.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -4393,6 +4413,7 @@
         "lib/netcoreapp2.0/_._",
         "lib/netstandard1.3/Microsoft.CSharp.dll",
         "lib/netstandard2.0/Microsoft.CSharp.dll",
+        "lib/netstandard2.0/Microsoft.CSharp.xml",
         "lib/portable-net45+win8+wp8+wpa81/_._",
         "lib/uap10.0.16299/_._",
         "lib/win8/_._",
@@ -4402,7 +4423,7 @@
         "lib/xamarinmac20/_._",
         "lib/xamarintvos10/_._",
         "lib/xamarinwatchos10/_._",
-        "microsoft.csharp.4.5.0.nupkg.sha512",
+        "microsoft.csharp.4.7.0.nupkg.sha512",
         "microsoft.csharp.nuspec",
         "ref/MonoAndroid10/_._",
         "ref/MonoTouch10/_._",
@@ -4865,17 +4886,19 @@
         "openaifork.nuspec"
       ]
     },
-    "Reddit/1.5.2": {
-      "sha512": "a8fLFxuSBG/NANlcdj6tmeAS1gnZNV+0HesL3bEvnVBimiE7+MQGi9AMcIq8AFAGY2Kv21p369NZgadD2HEMKA==",
+    "Portable.BouncyCastle/1.9.0": {
+      "sha512": "eZZBCABzVOek+id9Xy04HhmgykF0wZg9wpByzrWN7q8qEI0Qen9b7tfd7w8VA3dOeesumMG7C5ZPy0jk7PSRHw==",
       "type": "package",
-      "path": "reddit/1.5.2",
+      "path": "portable.bouncycastle/1.9.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "lib/netstandard2.0/Reddit.NET.dll",
-        "lib/netstandard2.0/Reddit.NET.xml",
-        "reddit.1.5.2.nupkg.sha512",
-        "reddit.nuspec"
+        "lib/net40/BouncyCastle.Crypto.dll",
+        "lib/net40/BouncyCastle.Crypto.xml",
+        "lib/netstandard2.0/BouncyCastle.Crypto.dll",
+        "lib/netstandard2.0/BouncyCastle.Crypto.xml",
+        "portable.bouncycastle.1.9.0.nupkg.sha512",
+        "portable.bouncycastle.nuspec"
       ]
     },
     "RestSharp/106.6.9": {
@@ -9279,6 +9302,11 @@
         "telegram.bot.19.0.0.nupkg.sha512",
         "telegram.bot.nuspec"
       ]
+    },
+    "InstagramApiSharp/1.8.0": {
+      "type": "project",
+      "path": "InstagramApiSharp/src/InstagramApiSharp/InstagramApiSharp.csproj",
+      "msbuildProject": "InstagramApiSharp/src/InstagramApiSharp/InstagramApiSharp.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -9287,9 +9315,10 @@
       "FluentScheduler >= 5.5.1",
       "GoFileSharp >= 1.0.4",
       "IniWrapper.ini-parser >= 1.1.0",
+      "InstagramApiSharp >= 1.8.0",
       "NAudio >= 2.2.1",
       "OpenAIFork >= 1.12.0",
-      "Reddit >= 1.5.2",
+      "RestSharp >= 106.6.9",
       "Selenium.WebDriver >= 4.19.0",
       "Selenium.WebDriver.ChromeDriver >= 123.0.6312.8600",
       "System.Drawing.Common >= 8.0.3",
@@ -9323,12 +9352,17 @@
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "D:\\Saves\\C# Saves\\RedditBotNew\\OpenAiApi": {},
-        "https://api.nuget.org/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {},
+        "https://nuget.voids.site/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\Saves\\C# Saves\\RedditBotNew\\InstagramApiSharp\\src\\InstagramApiSharp\\InstagramApiSharp.csproj": {
+              "projectPath": "D:\\Saves\\C# Saves\\RedditBotNew\\InstagramApiSharp\\src\\InstagramApiSharp\\InstagramApiSharp.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -9365,9 +9399,9 @@
             "target": "Package",
             "version": "[1.12.0, )"
           },
-          "Reddit": {
+          "RestSharp": {
             "target": "Package",
-            "version": "[1.5.2, )"
+            "version": "[106.6.9, )"
           },
           "Selenium.WebDriver": {
             "target": "Package",

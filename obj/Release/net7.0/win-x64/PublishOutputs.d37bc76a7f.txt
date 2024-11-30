@@ -2,4 +2,5 @@ D:\Saves\C# Saves\RedditBotNew\Build\RedditBotNew.pdb
 D:\Saves\C# Saves\RedditBotNew\Build\selenium-manager\linux\selenium-manager
 D:\Saves\C# Saves\RedditBotNew\Build\selenium-manager\macos\selenium-manager
 D:\Saves\C# Saves\RedditBotNew\Build\selenium-manager\windows\selenium-manager.exe
+D:\Saves\C# Saves\RedditBotNew\Build\InstagramApiSharp.pdb
 D:\Saves\C# Saves\RedditBotNew\Build\RedditBotNew.exe

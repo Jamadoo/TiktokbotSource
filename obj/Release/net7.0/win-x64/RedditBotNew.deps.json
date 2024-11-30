@@ -13,13 +13,15 @@
           "FluentScheduler": "5.5.1",
           "GoFileSharp": "1.0.4",
           "IniWrapper.ini-parser": "1.1.0",
+          "InstagramApiSharp": "1.8.0",
           "NAudio": "2.2.1",
           "OpenAIFork": "1.12.0",
-          "Reddit": "1.5.2",
+          "RestSharp": "106.6.9",
           "Selenium.WebDriver": "4.19.0",
           "Selenium.WebDriver.ChromeDriver": "123.0.6312.8600",
           "System.Drawing.Common": "8.0.3",
           "Telegram.Bot": "19.0.0",
+          "Reddit.NET": "1.5.3.0",
           "runtimepack.Microsoft.NETCore.App.Runtime.win-x64": "7.0.1"
         },
         "runtime": {
@@ -769,7 +771,7 @@
           }
         }
       },
-      "Microsoft.CSharp/4.5.0": {},
+      "Microsoft.CSharp/4.7.0": {},
       "Microsoft.Extensions.Configuration/2.1.0": {
         "dependencies": {
           "Microsoft.Extensions.Configuration.Abstractions": "2.1.0"
@@ -1032,16 +1034,11 @@
           }
         }
       },
-      "Reddit/1.5.2": {
-        "dependencies": {
-          "Microsoft.CSharp": "4.5.0",
-          "Newtonsoft.Json": "13.0.3",
-          "RestSharp": "106.6.9"
-        },
+      "Portable.BouncyCastle/1.9.0": {
         "runtime": {
-          "lib/netstandard2.0/Reddit.NET.dll": {
-            "assemblyVersion": "1.5.2.0",
-            "fileVersion": "1.5.2.0"
+          "lib/netstandard2.0/BouncyCastle.Crypto.dll": {
+            "assemblyVersion": "1.9.0.0",
+            "fileVersion": "1.9.0.1"
           }
         }
       },
@@ -1947,6 +1944,24 @@
             "fileVersion": "19.0.0.0"
           }
         }
+      },
+      "InstagramApiSharp/1.8.0": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "Newtonsoft.Json": "13.0.3",
+          "Portable.BouncyCastle": "1.9.0"
+        },
+        "runtime": {
+          "InstagramApiSharp.dll": {}
+        }
+      },
+      "Reddit.NET/1.5.3.0": {
+        "runtime": {
+          "Reddit.NET.dll": {
+            "assemblyVersion": "1.5.3.0",
+            "fileVersion": "1.5.3.0"
+          }
+        }
       }
     }
   },
@@ -2010,12 +2025,12 @@
       "path": "microsoft.bcl.asyncinterfaces/1.1.1",
       "hashPath": "microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512"
     },
-    "Microsoft.CSharp/4.5.0": {
+    "Microsoft.CSharp/4.7.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-kaj6Wb4qoMuH3HySFJhxwQfe8R/sJsNJnANrvv8WdFPMoNbKY5htfNscv+LHCu5ipz+49m2e+WQXpLXr9XYemQ==",
-      "path": "microsoft.csharp/4.5.0",
-      "hashPath": "microsoft.csharp.4.5.0.nupkg.sha512"
+      "sha512": "sha512-pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
+      "path": "microsoft.csharp/4.7.0",
+      "hashPath": "microsoft.csharp.4.7.0.nupkg.sha512"
     },
     "Microsoft.Extensions.Configuration/2.1.0": {
       "type": "package",
@@ -2178,12 +2193,12 @@
       "path": "openaifork/1.12.0",
       "hashPath": "openaifork.1.12.0.nupkg.sha512"
     },
-    "Reddit/1.5.2": {
+    "Portable.BouncyCastle/1.9.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-a8fLFxuSBG/NANlcdj6tmeAS1gnZNV+0HesL3bEvnVBimiE7+MQGi9AMcIq8AFAGY2Kv21p369NZgadD2HEMKA==",
-      "path": "reddit/1.5.2",
-      "hashPath": "reddit.1.5.2.nupkg.sha512"
+      "sha512": "sha512-eZZBCABzVOek+id9Xy04HhmgykF0wZg9wpByzrWN7q8qEI0Qen9b7tfd7w8VA3dOeesumMG7C5ZPy0jk7PSRHw==",
+      "path": "portable.bouncycastle/1.9.0",
+      "hashPath": "portable.bouncycastle.1.9.0.nupkg.sha512"
     },
     "RestSharp/106.6.9": {
       "type": "package",
@@ -2968,6 +2983,16 @@
       "sha512": "sha512-Q16IOitgjGoaJOuqgKQy0FeF+hr/ncmlX2esrhCC7aiyhSX7roYEriWaGAHkQZR8QzbImjFfl4eQh2IxcnOrPg==",
       "path": "telegram.bot/19.0.0",
       "hashPath": "telegram.bot.19.0.0.nupkg.sha512"
+    },
+    "InstagramApiSharp/1.8.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Reddit.NET/1.5.3.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
     }
   },
   "runtimes": {

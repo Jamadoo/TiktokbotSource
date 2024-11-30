@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RedditBotNew")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5745fbe996579b7c93dd687da817a1029aa6f8e1")]
 [assembly: System.Reflection.AssemblyProductAttribute("RedditBotNew")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RedditBotNew")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

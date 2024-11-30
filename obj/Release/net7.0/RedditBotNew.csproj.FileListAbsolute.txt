@@ -49,3 +49,6 @@ D:\Saves\C# Saves\RedditBotNew\obj\Release\net7.0\ref\RedditBotNew.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\FluentScheduler.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\GoFileSharp.dll
 D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\Anthropic.SDK.dll
+D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\BouncyCastle.Crypto.dll
+D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\InstagramApiSharp.dll
+D:\Saves\C# Saves\RedditBotNew\bin\Release\net7.0\InstagramApiSharp.pdb
