@@ -124,6 +124,17 @@ This is an **advanced Telegram bot** powered by **ChatGPT** and paired with mult
 
 ---
 
+## 🔒 Privacy Notice
+
+This is a **private bot**.  
+Thus, I will **not**:
+- Provide a build or installation guide  
+- Share the `.zip` file containing `PersistentStorage` data (config, videos, and image assets)  
+
+This project is purely for **portfolio and demonstration purposes**.  
+
+---
+
 ## ⚠️ Status: Outdated
 
 This bot **no longer works** due to:
