@@ -1,7 +1,3 @@
-Here’s your README rewritten with **clean grammar**, **better formatting**, and a more **appealing informal tone** while keeping *all* details intact:
-
----
-
 # 🚀 TikTok Bot – One of My Most Complex Projects Yet
 
 **Stats:**
@@ -126,5 +122,3 @@ The accounts are still up. You can check out all the content this bot created:
 * [UpvoteVoices TikTok](https://www.tiktok.com/@upvotevoices)
 * [TextMeStories TikTok](https://www.tiktok.com/@textmestories8)
 * [SongFrames TikTok](https://www.tiktok.com/@upvotevoices_)
-
----
