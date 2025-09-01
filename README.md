@@ -51,7 +51,7 @@ This is an **advanced Telegram bot** powered by **ChatGPT** and paired with mult
 
 ### 1️⃣ Reddit to Video
 
-* Scrapes the **top 50 posts** from a chosen subreddit (defaults to `r/`) via the Reddit API.
+* Scrapes the **top 50 posts** from a chosen subreddit (defaults to `r/AskReddit`) via the Reddit API.
 * Extracts **titles** and **body text** from posts.
 * Uses **ChatGPT** (with a 10,000-char prompt) to pick the post most likely to **perform best** in a short video format.
 * Fetches **top 100 comments** (plus replies up to 3 levels deep) and stores them in an array of objects.
