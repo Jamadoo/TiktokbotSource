@@ -128,7 +128,7 @@ This is an **advanced Telegram bot** powered by **ChatGPT** and paired with mult
 
 ---
 
-## 🪦 Status: Outdated
+## ⚠️ Status: Outdated
 
 This bot **no longer works** due to:
 
