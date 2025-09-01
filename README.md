@@ -1,7 +1,6 @@
 # 🚀 TikTok Bot – One of My Most Complex Projects Yet
 ![TikTok](https://img.shields.io/badge/TikTok-Automation-blueviolet?style=for-the-badge\&logo=tiktok)
-![Python](https://img.shields.io/badge/Python-Expert-3776AB?style=for-the-badge\&logo=python)
-![FFMPEG](https://img.shields.io/badge/FFMPEG-Master-green?style=for-the-badge\&logo=ffmpeg)
+![FFMPEG](https://img.shields.io/badge/FFMPEG-green?style=for-the-badge\&logo=ffmpeg)
 ![AI](https://img.shields.io/badge/AI-Driven-orange?style=for-the-badge\&logo=openai)
 ![Status](https://img.shields.io/badge/Status-Legacy-red?style=for-the-badge)
 
