@@ -66,9 +66,7 @@ This is an **advanced Telegram bot** powered by **ChatGPT** and paired with mult
 * Sends final video link to Telegram.
 * ⚠️ Even plays with **raw MP3 data** at some point.
 * Posted on TikTok: [UpvoteVoices](https://www.tiktok.com/@upvotevoices)
-
   * Example: [Watch Here](https://www.tiktok.com/@upvotevoices/video/7365241679189724459)
-  * ⚠️ Account likely shadow-banned (TikTok flagged bot uploads).
 
 ---
 
@@ -84,7 +82,6 @@ This is an **advanced Telegram bot** powered by **ChatGPT** and paired with mult
 * Uploaded to **GoFile**; link sent over Telegram.
 * ChatGPT writes the caption.
 * Posted on TikTok: [TextMeStories](https://www.tiktok.com/@textmestories8)
-
   * Example: [Watch Here](https://www.tiktok.com/@textmestories8/video/7447537722253675782)
 
 ---
@@ -104,7 +101,6 @@ This is an **advanced Telegram bot** powered by **ChatGPT** and paired with mult
 * ChatGPT creates a caption **tagging the featured user**.
 * Uploads to GoFile, shares link in Telegram.
 * Posted on TikTok: [SongFrames](https://www.tiktok.com/@upvotevoices_)
-
   * Example: [Watch Here](https://www.tiktok.com/@upvotevoices_/video/7369872164159343915)
 
 ---
@@ -138,13 +134,6 @@ This bot **no longer works** due to:
 * Dependency deprecation
 
 But, it’s designed so I could **revive it in the future** with relative ease.
-
----
-
-## 🤯 a Little Rant
-
-* FFMPEG is surprisingly hard to master — docs are okay-ish but no solid crash courses exist.
-* Even ChatGPT struggles to write reliable FFMPEG scripts.
 
 ---
 
