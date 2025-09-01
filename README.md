@@ -32,11 +32,11 @@
 
 | Category        | Tech Used                                      |
 | --------------- | -----------------------------------------------|
-| **Programming** | C#, Python, AsyncIO, REST APIs, Web Scraping   |
+| **Programming** | C#, AsyncIO, REST APIs, Web Scraping   |
 | **AI Models**   | OpenAI GPT, ElevenLabs TTS, Suno Music Gen     |
 | **Automation**  | Telegram Bot API, Reverse-Engineered APIs      |
 | **Video/Audio** | FFMPEG, MP3 Raw Data Manipulation              |
-| **Infra**       | Docker, Cron Scheduling                        |
+| **Infra**       | Cron Scheduling                                |
 | **Hosting**     | GoFile (Video Hosting)                         |
 
 ---
