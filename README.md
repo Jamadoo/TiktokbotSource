@@ -1,4 +1,9 @@
 # 🚀 TikTok Bot – One of My Most Complex Projects Yet
+![TikTok](https://img.shields.io/badge/TikTok-Automation-blueviolet?style=for-the-badge\&logo=tiktok)
+![Python](https://img.shields.io/badge/Python-Expert-3776AB?style=for-the-badge\&logo=python)
+![FFMPEG](https://img.shields.io/badge/FFMPEG-Master-green?style=for-the-badge\&logo=ffmpeg)
+![AI](https://img.shields.io/badge/AI-Driven-orange?style=for-the-badge\&logo=openai)
+![Status](https://img.shields.io/badge/Status-Legacy-red?style=for-the-badge)
 
 **Stats:**
 
@@ -7,6 +12,33 @@
 * **Comment lines:** 497
 * **Methods:** 82
 * **Dependencies:** Multiple external libraries & APIs
+
+---
+
+## 🔥 TL;DR
+
+* **One of my most complex projects ever.**
+* **3,869 lines of code**, **82 methods**, tons of APIs & AI models.
+* A **Telegram-powered TikTok bot** that:
+
+  * Uses **ChatGPT + ElevenLabs + Suno**
+  * Reverse-engineers APIs & sites
+  * Automates video creation (Reddit posts, fake chat convos, or follower-inspired music videos)
+* Was capable of **scheduling posts, generating captions, and uploading to TikTok (semi-automated)**.
+* 🔥 Proof that I can build large-scale AI automation systems **from scratch**.
+
+---
+
+## 🧩 Tech Stack
+
+| Category        | Tech Used                                      |
+| --------------- | -----------------------------------------------|
+| **Programming** | C#, Python, AsyncIO, REST APIs, Web Scraping   |
+| **AI Models**   | OpenAI GPT, ElevenLabs TTS, Suno Music Gen     |
+| **Automation**  | Telegram Bot API, Reverse-Engineered APIs      |
+| **Video/Audio** | FFMPEG, MP3 Raw Data Manipulation              |
+| **Infra**       | Docker, Cron Scheduling                        |
+| **Hosting**     | GoFile (Video Hosting)                         |
 
 ---
 
@@ -87,11 +119,13 @@ This is an **advanced Telegram bot** powered by **ChatGPT** and paired with mult
 
 ---
 
-## 🖼️ Screenshots
+## 🖼️ Screenshots  
 
-![Screenshot3](https://github.com/user-attachments/assets/a4d18eaa-acfe-4bcd-bcf0-6c12e844c0da)
-![Screenshot2](https://github.com/user-attachments/assets/269aba49-671e-4eb3-b43f-75400e701b5b)
-![Screenshot1](https://github.com/user-attachments/assets/aedc2b16-cc8c-408d-aca1-41ef5bafd8b2)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a4d18eaa-acfe-4bcd-bcf0-6c12e844c0da" width="30%" /> 
+  <img src="https://github.com/user-attachments/assets/269aba49-671e-4eb3-b43f-75400e701b5b" width="30%" />
+  <img src="https://github.com/user-attachments/assets/aedc2b16-cc8c-408d-aca1-41ef5bafd8b2" width="30%" />
+</p>  
 
 ---
 
@@ -108,10 +142,10 @@ But, it’s designed so I could **revive it in the future** with relative ease.
 
 ---
 
-## 🤯 Notes
+## 🤯 a Little Rant
 
-* FFMPEG is **insanely hard to master**—docs are okay-ish but no solid crash courses exist.
-* Even ChatGPT struggles to write **reliable FFMPEG scripts**.
+* FFMPEG is surprisingly hard to master — docs are okay-ish but no solid crash courses exist.
+* Even ChatGPT struggles to write reliable FFMPEG scripts.
 
 ---
 
