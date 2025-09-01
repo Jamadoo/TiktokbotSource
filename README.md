@@ -1,38 +1,130 @@
-One of my most complex projects yet.
-Total lines: 3 869
-Non-empty lines: 3 622
-Comment lines: 497
-Methods: 82
-+ all dependencies and external libraries
+Here’s your README rewritten with **clean grammar**, **better formatting**, and a more **appealing informal tone** while keeping *all* details intact:
 
-Advanced telegram Bot that uses Chatgpt, paired multiple other AI models (like Elevenlabs, suno and reverse engineered websites) to create one of 3 types of videos
-1) Reddit To Video
-   - Uses the Reddit API to scrape the top 50 most recent posts on a specified subreddit (defaults to r/)
-   - Scrapes the post's title and body text
-   - Feed all the posts with a 10 000 character prompt to chatgpt, for chatgpt to pick out the best post from the 50 (in terms of which would preform the best in a shirt video format)
-   - Then the AI scrapes the top 100 comments of the selected post (includes replies until the 3rd level reply), and saves them in a array of objects
-   - Filter, arrange and modify the comments a bit with hardcoded methods
-   - It then feeds this with another 10 000 character prompt to chatgpt, for chatgpt to select the best comments. Chatgpt edits and merges comments together to ensure a compelling story while keeping the language clean.
-   - These comments are then fetched, and using a custom HTML website, a reddit "lookalike" UI created for that comment (with the user's profile picture, name and rewards)
-         > Note, each sentence has its own "screenshot" as on each sentence spoken, the sentence is revealed
-   - These comments are then fed into elenlabs to be spoken. Sentence for sentence
-   - Then a random background video and song is selected from storage
-   - Then using a complex and dynamic FFMPEG command, all of these elements are put together to create a sosial media video
-   - The final script and post title was then send to chatgpt, paied with a prompt, to create a fitted caption and hashtags
-   - There was attampts to automaticly upload these videos to tiktok (i even contributed to a opensource [TiktokUploader Bot](https://github.com/wkaisertexas/tiktok-uploader)), but this was unreliable, thus i resorted in using GoFile to upload the files
-   - The video file link is then send over the telegram channel for me to manually upload
-   - This bot messes with Mp3 raw data at some point :/
-   - Tiktok Channel used to post on: https://www.tiktok.com/@upvotevoices
-       > Note, i suspect tiktok detected my videos where uploaded by a bot (when i was still using that), so my account got shadow banned. As i see my watch time being pretty high of the few viewers i get.
-2) TextMessage Convo To Video
-   - Here the chatgpt genorates a new topic/idea for a weird text message convoration between 2 poeple
-   - Chatgpt is then intructed to select voiceover-voices and create the text message convo between the 2 people, following a 5 000 character prompt
+---
 
+# 🚀 TikTok Bot – One of My Most Complex Projects Yet
 
-The bot supports scheduled creations, where i can set the times with each of which bots uploads when.
+**Stats:**
 
-Outdated:
- - This bot does not currently work anymore. As updated rolled out on AI platforms, tokens been used up, reverse engineered change their API and dependancies get discontinued, the bot saw the end of its day
- - No reason why it shouldnt be brought back to live with relative effort, as this was written with the idea of "i should stil understand this code in 2 years time"
+* **Total lines:** 3,869
+* **Non-empty lines:** 3,622
+* **Comment lines:** 497
+* **Methods:** 82
+* **Dependencies:** Multiple external libraries & APIs
 
-Check Out the videos it created in the past
+---
+
+## 🔥 Overview
+
+This is an **advanced Telegram bot** powered by **ChatGPT** and paired with multiple AI models (like **ElevenLabs**, **Suno**, and **reverse-engineered APIs**) to generate **three unique types of TikTok videos**.
+
+---
+
+## 🎥 Video Types
+
+### 1️⃣ Reddit to Video
+
+* Scrapes the **top 50 posts** from a chosen subreddit (defaults to `r/`) via the Reddit API.
+* Extracts **titles** and **body text** from posts.
+* Uses **ChatGPT** (with a 10,000-char prompt) to pick the post most likely to **perform best** in a short video format.
+* Fetches **top 100 comments** (plus replies up to 3 levels deep) and stores them in an array of objects.
+* Applies hardcoded methods to **filter and format comments**.
+* Another 10,000-char ChatGPT prompt is used to refine, merge, and clean comments into a **story-driven, safe-for-work script**.
+* Generates a **custom Reddit-like UI** (HTML-based), with **per-sentence screenshots** that reveal each line as it's spoken.
+* Uses **ElevenLabs** for text-to-speech (sentence by sentence).
+* Picks a **random background video & song** (ChatGPT matches them to the topic).
+* Builds the final video using a **complex FFMPEG pipeline**.
+* ChatGPT also creates **captions & hashtags**.
+* **Auto-upload attempts to TikTok** (via contribution to [TikTokUploader Bot](https://github.com/wkaisertexas/tiktok-uploader))—abandoned due to unreliability. Switched to **GoFile** for hosting, then manual upload.
+* Sends final video link to Telegram.
+* ⚠️ Even plays with **raw MP3 data** at some point.
+* Posted on TikTok: [UpvoteVoices](https://www.tiktok.com/@upvotevoices)
+
+  * Example: [Watch Here](https://www.tiktok.com/@upvotevoices/video/7365241679189724459)
+  * ⚠️ Account likely shadow-banned (TikTok flagged bot uploads).
+
+---
+
+### 2️⃣ Text Message Convo to Video
+
+* ChatGPT creates a **weird/funny conversation** idea between two fictional people (5,000-char prompt).
+* Picks **voice actors** via ElevenLabs.
+* Splits conversation into structured objects.
+* Reverse-engineers a **website API** (via Burp Suite) to generate **WhatsApp/Instagram-style chat UIs** for each message.
+* Generates **voiceovers** for each line.
+* ChatGPT chooses a **matching background video & music track**.
+* Final video rendered using **another dynamic FFMPEG command**.
+* Uploaded to **GoFile**; link sent over Telegram.
+* ChatGPT writes the caption.
+* Posted on TikTok: [TextMeStories](https://www.tiktok.com/@textmestories8)
+
+  * Example: [Watch Here](https://www.tiktok.com/@textmestories8/video/7447537722253675782)
+
+---
+
+### 3️⃣ Profile to Video
+
+* Picks a **random follower** (via reverse-engineered TikTok API).
+* Downloads their **profile picture**.
+* ChatGPT writes a **music prompt** inspired by the photo.
+* **Suno** composes a custom track.
+* Splits track into stems (drums, melody, etc.).
+* Creates waveforms for each stem and **syncs to 60 BPM**.
+* Uses a **pre-recorded FL Studio timeline video** to simulate a live music session.
+* Animates waveforms and overlays them for a dynamic effect.
+* Profile picture is featured at the start of the video.
+* **FFMPEG renders** the final edit, adding extra visualizers.
+* ChatGPT creates a caption **tagging the featured user**.
+* Uploads to GoFile, shares link in Telegram.
+* Posted on TikTok: [SongFrames](https://www.tiktok.com/@upvotevoices_)
+
+  * Example: [Watch Here](https://www.tiktok.com/@upvotevoices_/video/7369872164159343915)
+
+---
+
+## ⚙️ Extra Features
+
+* Full **error handling**: Logs issues in Telegram but keeps running.
+* Supports **scheduled video creation & posting**.
+* Telegram channel shows **live updates** on the bot’s workflow.
+* Can be **remotely updated** via Telegram bot commands.
+
+---
+
+## 🖼️ Screenshots
+
+![Screenshot3](https://github.com/user-attachments/assets/a4d18eaa-acfe-4bcd-bcf0-6c12e844c0da)
+![Screenshot2](https://github.com/user-attachments/assets/269aba49-671e-4eb3-b43f-75400e701b5b)
+![Screenshot1](https://github.com/user-attachments/assets/aedc2b16-cc8c-408d-aca1-41ef5bafd8b2)
+
+---
+
+## 🪦 Status: Outdated
+
+This bot **no longer works** due to:
+
+* AI platform updates
+* Token exhaustion
+* Reverse-engineered API changes
+* Dependency deprecation
+
+But, it’s designed so I could **revive it in the future** with relative ease.
+
+---
+
+## 🤯 Notes
+
+* FFMPEG is **insanely hard to master**—docs are okay-ish but no solid crash courses exist.
+* Even ChatGPT struggles to write **reliable FFMPEG scripts**.
+
+---
+
+## 🎬 Watch the Old Videos!
+
+The accounts are still up. You can check out all the content this bot created:
+
+* [UpvoteVoices TikTok](https://www.tiktok.com/@upvotevoices)
+* [TextMeStories TikTok](https://www.tiktok.com/@textmestories8)
+* [SongFrames TikTok](https://www.tiktok.com/@upvotevoices_)
+
+---
